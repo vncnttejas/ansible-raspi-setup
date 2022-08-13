@@ -1,0 +1,17 @@
+---
+version: 0.0.1
+name: raspi-setup
+namespace: vncnttejas
+authors:
+  - Vincent <vncnttejas@users.noreply.github.com>
+readme: README.md
+description: Stuff to do with an old and retired raspberry pi
+dependencies: {}
+tags:
+  - raspi
+  - pi
+  - transmission
+  - mount-hdd
+  - ufw
+  - firewall
+  - raspberry

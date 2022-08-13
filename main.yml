@@ -1,0 +1,68 @@
+- name: Set up rpi
+  hosts: raspi-home
+  vars_files:
+    - vars.yml
+
+  # apt update and upgrade
+  tasks:
+  - name: Update and upgrade
+    become: true
+    apt:
+      upgrade: full
+      update_cache: yes
+
+  # install base packages
+  - name: Install base packages
+    become: true
+    apt:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - curl
+      - git
+      - vim
+
+  # Mount HDD
+  - name: Mount HDD
+    become: true
+    mount:
+      path: "{{ hdd_mount_path }}"
+      src: "UUID={{ hdd_uuid }}" # you should be able to find this out by running the `blkid` command
+      fstype: "{{ hdd_fstype }}"
+      opts: defaults,auto,users,rw,nofail,noatime
+      state: present
+
+  # Setup a firewall, with only intranet allow for ssh and transmission daemon
+  - name: Setup ufw
+    become: true
+    import_role:
+      name: weareinteractive.ufw
+    vars:
+      ufw_enabled: true
+      ufw_packages: ['ufw']
+      ufw_service: ufw
+      ufw_rules:
+      - rule: allow
+        to_port: 22
+        from_ip: 192.168.0.0/24
+        logging: full
+      - rule: allow
+        to_port: 9091
+        from_ip: 192.168.0.0/24
+        logging: full
+
+  # Setup transmission deaemon
+  - name: Setup Transmission Deaemon
+    become: true
+    import_role:
+      name: linuxhq.transmission_daemon
+    vars:
+      td_incomplete_dir: "{{ td_incomplete_dir }}"
+      td_incomplete_dir_enabled: true
+      td_rpc_username: "{{ transmission_username }}"
+      td_download_dir: {{ td_download_dir }}
+      td_rpc_password: "{{ transmission_rpc_password }}"
+      td_speed_limit_down: 99999
+      td_speed_limit_up: 1
+      td_rpc_whitelist_enabled: true
+      td_rpc_whitelist: ['192.168.0.*']

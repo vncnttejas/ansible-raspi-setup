@@ -1,0 +1,8 @@
+---
+hdd_uuid: <hdd-uid>
+hdd_mount_path: /mnt/my-hdd
+hdd_fstype: ntfs
+transmission_username: <td_username>
+transmission_rpc_password: <rpc_password>
+td_incomplete_dir: /mnt/my-hdd/.incomplete
+td_download_dir: /mnt/my-hdd/downloads
